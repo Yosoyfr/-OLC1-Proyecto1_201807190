@@ -306,7 +306,6 @@ namespace _OLC1_Proyecto1_201807190
                         {
                             lexema += c;
                             estado = 3;
-
                         }
                         else
                         {
