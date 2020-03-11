@@ -109,21 +109,21 @@ namespace _OLC1_Proyecto1_201807190
                     case Tipo.Signo_Dos_Puntos:
                         return "Dos puntos";
                     case Tipo.Signo_Apuntador:
-                        return "Igual";
+                        return "Apuntador";
                     case Tipo.Signo_Punto_Concatenacion:
-                        return "Punto";
+                        return "Concatenacion";
                     case Tipo.Signo_Pleca_Disyuncion:
-                        return "Suma";
+                        return "Disyuncion";
                     case Tipo.Signo_Interrogacion:
-                        return "Resta";
+                        return "Interrogacion";
                     case Tipo.Signo_Asterisco:
-                        return "Division";
+                        return "Asterisco";
                     case Tipo.Signo_Mas:
-                        return "Multiplicacion";
+                        return "Signo Mas";
                     case Tipo.Signo_Negacion:
-                        return "Dos puntos";
+                        return "Negacion";
                     case Tipo.Signo_Porcentaje:
-                        return "Dos puntos";
+                        return "Porcentaje";
                     /*
                      * Otros tokens
                      */
@@ -141,6 +141,8 @@ namespace _OLC1_Proyecto1_201807190
                         return "Comentario de una linea";
                     case Tipo.Comentario_Multilinea:
                         return "Comentario multilinea";
+                    case Tipo.Todo_:
+                        return "Todo";
                     /*
                      * Tokens desconocidos
                      */

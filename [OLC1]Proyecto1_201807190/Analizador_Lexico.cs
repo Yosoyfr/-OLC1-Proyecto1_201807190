@@ -649,7 +649,7 @@ namespace _OLC1_Proyecto1_201807190
                             lexema += c;
                             estado = 21;
                         }
-                        else if (c != '>')
+                        else if (c != ']')
                         {
                             lexema += c;
                             estado = 20;
