@@ -18,23 +18,28 @@ namespace _OLC1_Proyecto1_201807190
             Signo_Llaves_Izq,
             Signo_Coma,
             Signo_Punto_y_Coma,
-            Signo_Apuntador,
+            Signo_Flecha,
             Signo_Dos_Puntos,
-            Signo_Punto_Concatenacion,
-            Signo_Pleca_Disyuncion,
-            Signo_Interrogacion,
-            Signo_Asterisco,
-            Signo_Mas,
-            Signo_Negacion,
-            Signo_Porcentaje,
+            Operador_Punto,
+            Operador_Disyuncion,
+            Operador_Interrogacion,
+            Operador_Asterisco,
+            Operador_Mas,
             Cadena,
+            /*
             Caracter,
-            Todo_,
             Numero,
             Numero_Decimal,
+            */
             Variable,
             Comentario_De_Linea,
             Comentario_Multilinea,
+            Valor_CONJ,
+            Salto_de_Linea,
+            Comilla_Simple,
+            Comilla_Doble,
+            Tabulacion,
+            Todo_,
             Desconocido,
             Reservada_No_Encontrada,
             Ultimo
@@ -108,39 +113,39 @@ namespace _OLC1_Proyecto1_201807190
                         return "Punto y coma";
                     case Tipo.Signo_Dos_Puntos:
                         return "Dos puntos";
-                    case Tipo.Signo_Apuntador:
-                        return "Apuntador";
-                    case Tipo.Signo_Punto_Concatenacion:
-                        return "Concatenacion";
-                    case Tipo.Signo_Pleca_Disyuncion:
-                        return "Disyuncion";
-                    case Tipo.Signo_Interrogacion:
-                        return "Interrogacion";
-                    case Tipo.Signo_Asterisco:
-                        return "Asterisco";
-                    case Tipo.Signo_Mas:
-                        return "Signo Mas";
-                    case Tipo.Signo_Negacion:
-                        return "Negacion";
-                    case Tipo.Signo_Porcentaje:
-                        return "Porcentaje";
+                    case Tipo.Signo_Flecha:
+                        return "Flecha";
+                    case Tipo.Operador_Punto:
+                        return "Operador Concatenar";
+                    case Tipo.Operador_Disyuncion:
+                        return "Operador Disyuncion (OR)";
+                    case Tipo.Operador_Interrogacion:
+                        return "Operador 0 o 1 vez";
+                    case Tipo.Operador_Asterisco:
+                        return "Operador Cerradura 0 o mas veces";
+                    case Tipo.Operador_Mas:
+                        return "Operador 1 o mas veces";
                     /*
                      * Otros tokens
                      */
                     case Tipo.Cadena:
                         return "Cadena";
-                    case Tipo.Caracter:
-                        return "Caracter";
-                    case Tipo.Numero:
-                        return "Numero";
-                    case Tipo.Numero_Decimal:
-                        return "Numero Decimal";
                     case Tipo.Variable:
-                        return "Variable";
+                        return "Identificador";
                     case Tipo.Comentario_De_Linea:
                         return "Comentario de una linea";
                     case Tipo.Comentario_Multilinea:
                         return "Comentario multilinea";
+                    case Tipo.Valor_CONJ:
+                        return "Valor del conjunto";
+                    case Tipo.Salto_de_Linea:
+                        return "Salto de Linea";
+                    case Tipo.Tabulacion:
+                        return "Tabulacion";
+                    case Tipo.Comilla_Simple:
+                        return "Comilla simple";
+                    case Tipo.Comilla_Doble:
+                        return "Comillas dobles";
                     case Tipo.Todo_:
                         return "Todo";
                     /*

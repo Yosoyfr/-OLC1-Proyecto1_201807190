@@ -20,7 +20,7 @@ namespace _OLC1_Proyecto1_201807190
         {
             RichTextBox newText = new RichTextBox();
             newText.Dock = DockStyle.Fill;
-            newText.Font = new Font("Microsoft Sans Serif", 11.2f);
+            newText.Font = new Font("Microsoft Sans Serif", 10.2f);
             return newText;
         }
 

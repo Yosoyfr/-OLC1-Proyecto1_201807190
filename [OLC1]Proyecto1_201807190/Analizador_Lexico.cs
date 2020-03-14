@@ -95,9 +95,12 @@ namespace _OLC1_Proyecto1_201807190
             int fila = 1;
             String lexema = "";
             Char c;
+            bool Conj = false;
+            bool id = false;
+            bool flecha_ = false;
+            bool dos_puntos = false;
             entrada = entrada + " ";
             pasoLibre = true;
-            int contadorCaracter = 0;
             for (int i = 0; i < entrada.Length; i++)
             {
                 c = entrada[i];
@@ -106,19 +109,19 @@ namespace _OLC1_Proyecto1_201807190
                 {
                     case 0:
                         /*
-                         * Revisara si puede ser una palabra reservada, un caracter o una variable
-                         */
-                        if (Char.IsLetter(c))
+                         * Revisara si puede ser un valor cunjunto
+                         */                       
+                        if (((int)c >= 33 && (int)c <= 125) && Conj && dos_puntos && id && flecha_)
                         {
-                            estado = 1;
+                            estado = 2;
                             lexema += c;
                         }
                         /*
-                         * Revisara si puede ser un numero
-                         */
-                        else if (Char.IsDigit(c))
+                        * Revisara si puede ser una palabra reservada, un caracter o una variable
+                        */
+                        else if (Char.IsLetter(c))
                         {
-                            estado = 2;
+                            estado = 1;
                             lexema += c;
                         }
                         /*
@@ -134,15 +137,6 @@ namespace _OLC1_Proyecto1_201807190
                         {
                             estado = 19;
                             lexema += c;
-                        }
-                        /*
-                         * Revisara si puede ser un caracter
-                         */
-                        else if (c == '\'')
-                        {
-                            estado = 14;
-                            i--;
-                            columna--;
                         }
                         /*
                          * Revisara si puede ser un espacio en blanco
@@ -197,52 +191,47 @@ namespace _OLC1_Proyecto1_201807190
                         {
                             lexema += c;
                             addToken(Token.Tipo.Signo_Dos_Puntos, lexema, fila, columna);
+                            dos_puntos = true;
                             lexema = "";
                         }
                         else if (c.CompareTo('.') == 0)
                         {
                             lexema += c;
-                            addToken(Token.Tipo.Signo_Punto_Concatenacion, lexema, fila, columna);
+                            addToken(Token.Tipo.Operador_Punto, lexema, fila, columna);
                             lexema = "";
                         }
                         else if (c.CompareTo('|') == 0)
                         {
                             lexema += c;
-                            addToken(Token.Tipo.Signo_Pleca_Disyuncion, lexema, fila, columna);
+                            addToken(Token.Tipo.Operador_Disyuncion, lexema, fila, columna);
                             lexema = "";
                         }
                         else if (c.CompareTo('?') == 0)
                         {
                             lexema += c;
-                            addToken(Token.Tipo.Signo_Interrogacion, lexema, fila, columna);
+                            addToken(Token.Tipo.Operador_Interrogacion, lexema, fila, columna);
                             lexema = "";
                         }
                         else if (c.CompareTo('*') == 0)
                         {
                             lexema += c;
-                            addToken(Token.Tipo.Signo_Asterisco, lexema, fila, columna);
+                            addToken(Token.Tipo.Operador_Asterisco, lexema, fila, columna);
                             lexema = "";
                         }
                         else if (c.CompareTo('+') == 0)
                         {
                             lexema += c;
-                            addToken(Token.Tipo.Signo_Mas, lexema, fila, columna);
+                            addToken(Token.Tipo.Operador_Mas, lexema, fila, columna);
                             lexema = "";
-                        }
-                        else if (c.CompareTo('~') == 0)
-                        {
-                            lexema += c;
-                            addToken(Token.Tipo.Signo_Negacion, lexema, fila, columna);
-                            lexema = "";
-                        }
-                        else if (c.CompareTo('%') == 0)
-                        {
-                            estado = 18;
-                            lexema += c;
                         }
                         else if (c.CompareTo('/') == 0)
                         {
                             estado = 9;
+                            lexema += c;
+                        }
+                        else if (c.CompareTo('\\') == 0)
+                        {
+                            estado = 3;
                             lexema += c;
                         }
                         else if (c.CompareTo('<') == 0)
@@ -275,6 +264,7 @@ namespace _OLC1_Proyecto1_201807190
                         else if (lexema.Equals("CONJ"))
                         {
                             addToken(Token.Tipo.Reservada_CONJ, lexema, fila, columna);
+                            Conj = true;
                             lexema = "";
                             i--;
                             columna--;
@@ -287,6 +277,7 @@ namespace _OLC1_Proyecto1_201807190
                         else
                         {
                             addToken(Token.Tipo.Variable, lexema, fila, columna);
+                            id = true;
                             lexema = "";
                             i--;
                             columna--;
@@ -295,53 +286,78 @@ namespace _OLC1_Proyecto1_201807190
                         break;
                     case 2:
                         /*
-                         * Revisara el numero
+                         * Revisara el valor conjunto
                          */
-                        if (Char.IsDigit(c))
+                        
+                        if (((int)c >= 33 && (int)c <= 126) && c != ';')
                         {
                             lexema += c;
                             estado = 2;
                         }
-                        else if (c.CompareTo('.') == 0)
+                        else
+                        {
+                            addToken(Token.Tipo.Valor_CONJ, lexema, fila, columna);
+                            lexema = "";
+                            i--;
+                            columna--;
+                            estado = 0;
+                            Conj = false;
+                            id = false;
+                            flecha_ = false;
+                            dos_puntos = false;
+                        }
+                        
+                        break;
+                    case 3:
+                        /*
+                        * Comprobar que es un comentario multilinea
+                        */
+                        if (c == 'n' || c == '\'' || c == '\"' || c == 't')
                         {
                             lexema += c;
                             estado = 3;
                         }
-                        else
+                        else if (lexema.Equals("\\n"))
                         {
-                            addToken(Token.Tipo.Numero, lexema, fila, columna);
+                            addToken(Token.Tipo.Salto_de_Linea, lexema, fila, columna);
                             lexema = "";
                             i--;
                             columna--;
                             estado = 0;
                         }
-                        break;
-                    case 3:
-                        if (Char.IsDigit(c))
+                        else if (lexema.Equals("\\t"))
                         {
-                            lexema += c;
-                            estado = 4;
+                            addToken(Token.Tipo.Tabulacion, lexema, fila, columna);
+                            lexema = "";
+                            i--;
+                            columna--;
+                            estado = 0;
+                        }
+                        else if (lexema.Equals("\\\'"))
+                        {
+                            addToken(Token.Tipo.Comilla_Simple, lexema, fila, columna);
+                            lexema = "";
+                            i--;
+                            columna--;
+                            estado = 0;
+                        }
+                        else if (lexema.Equals("\\\""))
+                        {
+                            addToken(Token.Tipo.Comilla_Doble, lexema, fila, columna);
+                            lexema = "";
+                            i--;
+                            columna--;
+                            estado = 0;
                         }
                         else
                         {
-                            Console.WriteLine("Error lexico con: " + c + " desdpues del punto se esperaban mas numeros");
                             estado = -1;
+                            i--;
+                            columna--;
                         }
                         break;
                     case 4:
-                        if (Char.IsDigit(c))
-                        {
-                            lexema += c;
-                            estado = 4;
-                        }
-                        else
-                        {
-                            addToken(Token.Tipo.Numero_Decimal, lexema, fila, columna);
-                            lexema = "";
-                            i--;
-                            columna--;
-                            estado = 0;
-                        }
+
                         break;
                     case 5:
                         /*
@@ -400,11 +416,18 @@ namespace _OLC1_Proyecto1_201807190
                         }
                         else if (lexema.Equals("->"))
                         {
-                            addToken(Token.Tipo.Signo_Apuntador, lexema, fila, columna);
+                            addToken(Token.Tipo.Signo_Flecha, lexema, fila, columna);
+                            flecha_ = true;
                             lexema = "";
                             i--;
                             columna--;
                             estado = 0;
+                        }
+                        else
+                        {
+                            estado = -1;
+                            i--;
+                            columna--;
                         }
                         break;
                         /*
@@ -414,17 +437,16 @@ namespace _OLC1_Proyecto1_201807190
                         /*
                         * Comprueba que es un comentario de una linea
                         */
-                        if (c == '/')
+                        lexema += c;
+                        if (lexema.Equals("//"))
                         {
-                            lexema += c;
-                            if (lexema.Equals("//"))
-                            {
-                                estado = 13;
-                            }
-                            else
-                            {
-                                estado = 9;
-                            }
+                            estado = 13;
+                        }
+                        else
+                        {
+                            estado = -1;
+                            i--;
+                            columna--;
                         }
                         break;
                     case 10:
@@ -442,6 +464,12 @@ namespace _OLC1_Proyecto1_201807190
                             {
                                 estado = 10;
                             }
+                        }
+                        else 
+                        {
+                            estado = -1;
+                            i--;
+                            columna--;
                         }
                         break;
                     case 11:
@@ -516,91 +544,6 @@ namespace _OLC1_Proyecto1_201807190
                             estado = 13;
                         }
                         break;
-                    case 14:
-                        contadorCaracter = 0;
-                        /*
-                         * Comprueba que es un caracter lo que viene viendo si es comilla simple
-                         */
-                        if (c == '\'')
-                        {
-                            lexema += c;
-                            estado = 15;
-                        }
-                        break;
-                    case 15:
-                        /*
-                         * Comprobara el caracter que viene para asignarle y cuando encuentre el otro 
-                         * (') cierra
-                        */
-                        if (c != '\'')
-                        {
-                            contadorCaracter++;
-                            lexema += c;
-                            estado = 15;
-                        }
-                        else if (contadorCaracter < 2)
-                        {
-                            estado = 16;
-                            i--;
-                            columna--;
-                        }
-                        else if (contadorCaracter >= 2)
-                        {
-                            estado = 17;
-                            i--;
-                            columna--;
-                        }
-                        break;
-                    case 16:
-                        /*
-                         * Aqui cierra la asignacion del carater
-                        */
-                        contadorCaracter = 0;
-                        if (c == '\'')
-                        {
-                            lexema += c;
-                            addToken(Token.Tipo.Caracter, lexema, fila, columna);
-                            estado = 0;
-                            lexema = "";
-                        }
-                        break;
-                    case 17:
-                        /*
-                         * Error del caracter
-                         */
-                        lexema += c;
-                        Console.WriteLine(lexema);
-                        addTokenErroneo(Token.Tipo.Desconocido, lexema, fila, columna);
-                        lexema = "";
-                        estado = 0;
-                        pasoLibre = false;
-                        break;
-                        /*
-                         * Sentencia de porcentaje doble
-                         */
-                    case 18:
-                        if (c.CompareTo('%') == 0 && lexema.Length < 2)
-                        {
-                            lexema += c;
-                            estado = 18;
-                        }
-                        else if (lexema.Equals("%%"))
-                        {
-                            addToken(Token.Tipo.Signo_Porcentaje, lexema, fila, columna);
-                            lexema = "";
-                            i--;
-                            columna--;
-                            estado = 0;
-                        }
-                        else
-                        {
-                            lexema = "";
-                            i--;
-                            columna--;
-                            estado = 0;
-                        }
-                        break;
-
                     case 19:
                         /*
                         * Comprobar que es un [:TODO:]
@@ -616,6 +559,12 @@ namespace _OLC1_Proyecto1_201807190
                             {
                                 estado = 19;
                             }
+                        }
+                        else
+                        {
+                            estado = -1;
+                            i--;
+                            columna--;
                         }
                         break;
                     case 20:
@@ -670,20 +619,11 @@ namespace _OLC1_Proyecto1_201807190
                      */
                     case -1:
                         lexema += c;
-                        if (c.CompareTo('\n') == 0 || c.CompareTo('\\') == 0 || c.CompareTo('\t') == 0 || c.CompareTo(' ') == 0 || c == 13)
-                        {
-                            estado = 0;
-                            lexema = "";
-                        }
-                        else
-                        {
-                            Console.WriteLine("Error lexico con: " + c);
-                            c.ToString();
-                            addTokenErroneo(Token.Tipo.Desconocido, lexema, fila, columna);
-                            estado = 0;
-                            lexema = "";
-                            pasoLibre = false;
-                        }
+                        Console.WriteLine("Error lexico con: " + lexema);
+                        addTokenErroneo(Token.Tipo.Desconocido, lexema, fila, columna);
+                        estado = 0;
+                        lexema = "";
+                        pasoLibre = false;
                         break;
                 }
 
