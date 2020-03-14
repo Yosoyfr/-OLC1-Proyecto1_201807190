@@ -369,6 +369,7 @@ namespace _OLC1_Proyecto1_201807190
                             estado = 6;
                         }
                         break;
+
                     case 6:
                         /*
                          * Comprobara todos los datos que contendra la cadena,
