@@ -14,6 +14,28 @@ namespace _OLC1_Proyecto1_201807190
         [STAThread]
         static void Main()
         {
+            List<string> sPostfix = new List<string>();
+            
+            sPostfix.Add(".");
+            sPostfix.Add(".");
+            sPostfix.Add(".");
+            sPostfix.Add("*");
+            sPostfix.Add("|");
+            sPostfix.Add(".");
+            sPostfix.Add("c");
+            sPostfix.Add("d");
+            sPostfix.Add(".");
+            sPostfix.Add("a");
+            sPostfix.Add("b");
+            sPostfix.Add("b");
+            sPostfix.Add("c");
+            sPostfix.Add("+");
+            sPostfix.Add("d");
+            
+            Evaluador_Expresion myExpression = new Evaluador_Expresion(sPostfix);
+
+            Console.WriteLine("Resultado = " + myExpression.evaluateExpression(sPostfix));
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
