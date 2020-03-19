@@ -140,6 +140,8 @@ namespace _OLC1_Proyecto1_201807190
 
             tokensAnalisis.Add(new Token(Token.Tipo.Ultimo, "ultimo", 0, 0));
 
+
+
             Analizador_Lexico.Singleton.imprimirListaToken(this.nombreArchivoER);
             Analizador_Lexico.Singleton.imprimirListaErrores(this.nombreArchivoER);
             Console.WriteLine("FIN!!!");

@@ -15,7 +15,8 @@ namespace _OLC1_Proyecto1_201807190
         static void Main()
         {
             List<string> sPostfix = new List<string>();
-            
+
+            /*
             sPostfix.Add(".");
             sPostfix.Add(".");
             sPostfix.Add(".");
@@ -31,10 +32,25 @@ namespace _OLC1_Proyecto1_201807190
             sPostfix.Add("c");
             sPostfix.Add("+");
             sPostfix.Add("d");
-            
+            */
+
+            /*
+            sPostfix.Add(".");
+            sPostfix.Add("letra");
+            sPostfix.Add("*");
+            sPostfix.Add("|");
+            sPostfix.Add("letra");
+            sPostfix.Add("|");
+            sPostfix.Add("digito");
+            sPostfix.Add("_");
+            */
+
             Evaluador_Expresion myExpression = new Evaluador_Expresion(sPostfix);
 
             Console.WriteLine("Resultado = " + myExpression.evaluateExpression(sPostfix));
+            Automata AFN =  myExpression.evaluateAFN(sPostfix);
+
+            Console.WriteLine(AFN);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

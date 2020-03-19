@@ -10,8 +10,8 @@ namespace _OLC1_Proyecto1_201807190
     {
         public const string Concatenar = ".";
         public const string Disyuncion = "|";
-        public const string Kleen = "*";
-        public const string Or = "+";
-        public const string And = "?";
+        public const string Kleene = "*";
+        public const string Cerradura_Positiva = "+";
+        public const string Interrogacion = "?";
     }
 }
