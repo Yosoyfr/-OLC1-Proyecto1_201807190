@@ -41,6 +41,7 @@ namespace _OLC1_Proyecto1_201807190
             preASTTree = createPreExp(expression);
         }
 
+
         //Creacion del arbol
         private Node createPreExp(List<string> expression)
         {
@@ -95,11 +96,12 @@ namespace _OLC1_Proyecto1_201807190
                         break;
                 }
             }
-            
+
             //Retornamos el ultimo nodo apilado
             return (Node)stackNodes.Pop();
         }
 
+        //Metodo para convertir la cerradura positiva (+) en (.) expresion (*) expresion
         public void convertList(List<string> expression, Stack p1, Stack p2) 
         {
             //Se lee la expresion de izquierda a derecha
@@ -140,9 +142,6 @@ namespace _OLC1_Proyecto1_201807190
             try
             {
                 preASTTree.processNode(stackResults);
-                //preASTTree.buildAFN(stackAFN);
-                //Automata AFN = (Automata)stackAFN.Pop();
-                //Console.WriteLine(AFN.Tipo);
                 result = (string)stackResults.Pop();
             }
             catch (Exception) 

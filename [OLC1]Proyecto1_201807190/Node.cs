@@ -80,6 +80,8 @@ namespace _OLC1_Proyecto1_201807190
             stackResults.Push(result);
         }
 
+        //Proceso de thompson
+        
         public void buildAFN(Stack stackAFN)
         {
             if (left != null)
@@ -118,7 +120,7 @@ namespace _OLC1_Proyecto1_201807190
                     break;
 
                 case Operador.Interrogacion:
-                    Automata auxI = AFNSimple(" ");
+                    Automata auxI = AFNSimple("Ɛ");
                     stackAFN.Push(auxI);
                     Automata I1 = (Automata)stackAFN.Pop();
                     Automata I2 = (Automata)stackAFN.Pop();
@@ -246,7 +248,7 @@ namespace _OLC1_Proyecto1_201807190
 
             Estado nInicio = new Estado(0);
 
-            nInicio.Transiciones.Add(new Transicion(nInicio, AFN2.Inicial, " "));
+            nInicio.Transiciones.Add(new Transicion(nInicio, AFN2.Inicial, "Ɛ"));
 
             afn_disyun.Estados.Add(nInicio);
             afn_disyun.Inicial = nInicio;
@@ -276,16 +278,16 @@ namespace _OLC1_Proyecto1_201807190
             List<Estado> antF1 = AFN1.Estados_Aceptacion;
             List<Estado> antF2 = AFN2.Estados_Aceptacion;
 
-            nInicio.Transiciones.Add(new Transicion(nInicio, antInicio, " "));
+            nInicio.Transiciones.Add(new Transicion(nInicio, antInicio, "Ɛ"));
 
             for (int k = 0; k < antF1.Count; k++)
             {
-                antF1[k].Transiciones.Add(new Transicion(antF1[k], nuevoFin, " "));
+                antF1[k].Transiciones.Add(new Transicion(antF1[k], nuevoFin, "Ɛ"));
             }
 
             for (int k = 0; k < antF1.Count; k++) 
             {
-                antF2[k].Transiciones.Add(new Transicion(antF2[k], nuevoFin, " "));
+                antF2[k].Transiciones.Add(new Transicion(antF2[k], nuevoFin, "Ɛ"));
             }
 
             return afn_disyun;
@@ -295,12 +297,10 @@ namespace _OLC1_Proyecto1_201807190
         {
             Automata afn_ckleene = new Automata();
 
-            //se crea un nuevo estado inicial
             Estado nuevoInicio = new Estado(0);
             afn_ckleene.Estados.Add(nuevoInicio);
             afn_ckleene.Inicial = nuevoInicio;
 
-            //agregar todos los estados intermedio
             for (int i = 0; i < automataFN.Estados.Count; i++)
             {
                 Estado tmp = (Estado)automataFN.Estados[i];
@@ -308,25 +308,21 @@ namespace _OLC1_Proyecto1_201807190
                 afn_ckleene.Estados.Add(tmp);
             }
 
-            //Se crea un nuevo estado de aceptacion
             Estado nuevoFin = new Estado(automataFN.Estados.Count + 1);
             afn_ckleene.Estados.Add(nuevoFin);
             afn_ckleene.Estados_Aceptacion.Add(nuevoFin);
 
-            //definir estados clave para realizar la cerraduras
             Estado anteriorInicio = automataFN.Inicial;
 
             List<Estado> anteriorFin = automataFN.Estados_Aceptacion;
 
-            // agregar transiciones desde el nuevo estado inicial
-            nuevoInicio.Transiciones.Add(new Transicion(nuevoInicio, anteriorInicio, " "));
-            nuevoInicio.Transiciones.Add(new Transicion(nuevoInicio, nuevoFin, " "));
+            nuevoInicio.Transiciones.Add(new Transicion(nuevoInicio, anteriorInicio, "Ɛ"));
+            nuevoInicio.Transiciones.Add(new Transicion(nuevoInicio, nuevoFin, "Ɛ"));
 
-            // agregar transiciones desde el anterior estado final
             for (int i = 0; i < anteriorFin.Count; i++)
             {
-                anteriorFin[i].Transiciones.Add(new Transicion(anteriorFin[i], anteriorInicio, " "));
-                anteriorFin[i].Transiciones.Add(new Transicion(anteriorFin[i], nuevoFin, " "));
+                anteriorFin[i].Transiciones.Add(new Transicion(anteriorFin[i], anteriorInicio, "Ɛ"));
+                anteriorFin[i].Transiciones.Add(new Transicion(anteriorFin[i], nuevoFin, "Ɛ"));
             }
             return afn_ckleene;
         }

@@ -73,7 +73,6 @@ namespace _OLC1_Proyecto1_201807190
         {
             Token nuevoToken = new Token(token, lexema, linea, columna);
             Lista_de_Tokens.Add(nuevoToken);
-            Console.WriteLine(nuevoToken.GetTipo);
         }
 
         /*

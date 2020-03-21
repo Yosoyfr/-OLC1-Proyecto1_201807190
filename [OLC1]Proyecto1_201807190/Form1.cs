@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,7 +18,6 @@ namespace _OLC1_Proyecto1_201807190
         {
             InitializeComponent();
         }
-
 
         /*
          * Metodo para crear nuevas Pestañas
@@ -129,10 +129,13 @@ namespace _OLC1_Proyecto1_201807190
 
         public string nombreArchivoER = "";
 
+        List<Image> imagesAFN;
+        List<Image> imagesAFD;
         public void correrAnalisis()
         {
+            imagesAFN = new List<Image>();
+            imagesAFD = new List<Image>();
             String entrada = textualTabControl1.SelectedTab.Controls[0].Text;
-
             /*
              * Proceso de análisis léxico
              */
@@ -140,11 +143,110 @@ namespace _OLC1_Proyecto1_201807190
 
             tokensAnalisis.Add(new Token(Token.Tipo.Ultimo, "ultimo", 0, 0));
 
+            //Lista de expresiones
+            List<Expresion> expresiones = new List<Expresion>();
+
+            int i = 0;
+
+            while (i < tokensAnalisis.Count) 
+            {
+                if (tokensAnalisis[i].tipoToken == Token.Tipo.Variable && tokensAnalisis[i + 1].tipoToken == Token.Tipo.Signo_Flecha && tokensAnalisis[i + 2].tipoToken != Token.Tipo.Valor_CONJ) 
+                {
+                    Expresion exp = new Expresion(tokensAnalisis[i].GetValor);
+                    int j = i + 2;
+                    while (tokensAnalisis[j].tipoToken != Token.Tipo.Signo_Punto_y_Coma)
+                    {
+                        if (tokensAnalisis[j].tipoToken == Token.Tipo.Signo_Llaves_Dech || tokensAnalisis[j].tipoToken == Token.Tipo.Signo_Llaves_Izq)
+                        { }
+                        else
+                            exp.Tokens.Add(tokensAnalisis[j].GetValor.Trim(new char[] { '\"' }));
+                        j++;
+                    }
+                    expresiones.Add(exp);
+                }
+                i++;
+            }
+
+            for (int j = 0; j < expresiones.Count; j++)
+            {
+                Evaluador_Expresion myExpression = new Evaluador_Expresion(expresiones[j].Tokens);
+
+                Automata AFN = myExpression.evaluateAFN(expresiones[j].Tokens);
+
+                List<string> alfabeto = new List<string>();
+
+                foreach (string token in expresiones[j].Tokens)
+                {
+                    if (!alfabeto.Contains(token) && !token.Equals("Ɛ") && !token.Equals("+") && !token.Equals("|") && !token.Equals("*") && !token.Equals("?") && !token.Equals("."))
+                    {
+                        alfabeto.Add(token);
+                    }
+                }
+                foreach (string aux in alfabeto)
+                {
+                    Console.WriteLine(aux);
+                }
+
+                expresiones[j].Afn = AFN;
+                expresiones[j].Afd.Alfabeto = alfabeto;
+                expresiones[j].convertAFN();
 
 
+                imagesAFN.Add(imge(expresiones[j].getDOTAFN()));
+                imagesAFD.Add(imge(expresiones[j].getDOTAFD()));
+            }
+
+            pictureBox1.Image = imagesAFD[0];
+            pictureBox2.Image = imagesAFN[0];
             Analizador_Lexico.Singleton.imprimirListaToken(this.nombreArchivoER);
             Analizador_Lexico.Singleton.imprimirListaErrores(this.nombreArchivoER);
             Console.WriteLine("FIN!!!");
+        }
+
+
+
+        public static string graphviz = @"D:\Graphviz2.38\bin\dot.exe";
+        public static string archivoentrada = @"D:\Francisco" + '\\' + "afn.dot";
+        private Bitmap imge(string dot)
+        {
+            try
+            {
+                string executable = graphviz;
+                string output = archivoentrada;
+                File.WriteAllText(output, dot);
+
+                System.Diagnostics.Process process = new System.Diagnostics.Process();
+
+                // Stop the process from opening a new window
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+
+                // Setup executable and parameters
+                process.StartInfo.FileName = executable;
+                process.StartInfo.Arguments = string.Format(@"{0} -Tjpg -O", output);
+
+                // Go
+                process.Start();
+                // and wait dot.exe to complete and exit
+                process.WaitForExit();
+                Bitmap bitmap = null; ;
+                using (Stream bmpStream = System.IO.File.Open(output + ".jpg", System.IO.FileMode.Open))
+                {
+                    Image image = Image.FromStream(bmpStream);
+                    bitmap = new Bitmap(image);
+                }
+
+                string path = output + ".jpg";
+                File.Delete(output + ".jpg");
+                return bitmap;
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                MessageBox.Show("Algo ha salido mal", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            Console.WriteLine("alv");
+            return null;
         }
     }
 }
