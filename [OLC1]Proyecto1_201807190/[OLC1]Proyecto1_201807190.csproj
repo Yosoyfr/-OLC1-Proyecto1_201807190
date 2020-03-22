@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Analizador_Lexico.cs" />
     <Compile Include="Automata.cs" />
+    <Compile Include="Conjunto.cs" />
     <Compile Include="Estado.cs" />
     <Compile Include="Evaluador_Expresion.cs" />
     <Compile Include="Expresion.cs" />

@@ -639,6 +639,22 @@ namespace _OLC1_Proyecto1_201807190
             }
         }
 
+
+        /*
+         * Distribucion de los conjuntos
+         */
+        public void distribucionConjuntos()
+        {
+            for (int i = 0; i < Lista_de_Tokens.Count; i++)
+            {
+                if (Lista_de_Tokens[i].tipoToken == Token.Tipo.Valor_CONJ)
+                {
+                    Conjunto conj = new Conjunto(Lista_de_Tokens[i - 2].GetValor, Lista_de_Tokens[i].GetValor);
+                    conj.showConjuntos();
+                }
+            }
+        }
+
         /*
          * Metodo que imprime en HTML la lista de tokens encontrada en el texto de la
          * pestaña en focus

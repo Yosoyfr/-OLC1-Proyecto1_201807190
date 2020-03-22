@@ -142,7 +142,7 @@ namespace _OLC1_Proyecto1_201807190
              * Proceso de análisis léxico
              */
             List<Token> tokensAnalisis = Analizador_Lexico.Singleton.analizador(entrada);
-
+            Analizador_Lexico.Singleton.distribucionConjuntos();
             tokensAnalisis.Add(new Token(Token.Tipo.Ultimo, "ultimo", 0, 0));
 
             //Lista de expresiones
@@ -156,15 +156,36 @@ namespace _OLC1_Proyecto1_201807190
                 {
                     Expresion exp = new Expresion(tokensAnalisis[i].GetValor);
                     int j = i + 2;
-                    while (tokensAnalisis[j].tipoToken != Token.Tipo.Signo_Punto_y_Coma)
+                    try
                     {
-                        if (tokensAnalisis[j].tipoToken == Token.Tipo.Signo_Llaves_Dech || tokensAnalisis[j].tipoToken == Token.Tipo.Signo_Llaves_Izq)
-                        { }
-                        else
-                            exp.Tokens.Add(tokensAnalisis[j].GetValor);
-                        j++;
+                        while (tokensAnalisis[j].tipoToken != Token.Tipo.Signo_Punto_y_Coma)
+                        {
+                            if (tokensAnalisis[j].tipoToken == Token.Tipo.Signo_Llaves_Dech || tokensAnalisis[j].tipoToken == Token.Tipo.Signo_Llaves_Izq)
+                            { }
+                            else
+                            {
+                                if (tokensAnalisis[j].tipoToken == Token.Tipo.Tabulacion || tokensAnalisis[j].tipoToken == Token.Tipo.Salto_de_Linea || tokensAnalisis[j].GetValor.Equals("\\"))
+                                {
+                                    exp.Tokens.Add("\\" + tokensAnalisis[j].GetValor);
+                                }
+                                else
+                                {
+                                    string aux = tokensAnalisis[j].GetValor;
+                                    if (aux.Trim(new char[] { '\"' }) == "\\")
+                                    {
+                                        aux = "\\" + aux.Trim(new char[] { '\"' });
+                                    }
+                                    exp.Tokens.Add(aux);
+                                }
+                            }
+                            j++;
+                        }
+                        expresiones.Add(exp);
                     }
-                    expresiones.Add(exp);
+                    catch (Exception)
+                    {
+                        MessageBox.Show("Hace falta un punto y coma", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error); 
+                    }
                 }
                 i++;
             }
@@ -181,7 +202,7 @@ namespace _OLC1_Proyecto1_201807190
                 {
                     if (!alfabeto.Contains(token) && !token.Equals("Ɛ") && !token.Equals("+") && !token.Equals("|") && !token.Equals("*") && !token.Equals("?") && !token.Equals("."))
                     {
-                        alfabeto.Add(token);
+                        alfabeto.Add(token.Trim(new char[] { '\"' }));
                     }
                 }
                 foreach (string aux in alfabeto)
@@ -193,15 +214,19 @@ namespace _OLC1_Proyecto1_201807190
                 expresiones[j].Afd.Alfabeto = alfabeto;
                 expresiones[j].convertAFN();
 
-
                 imagesAFN.Add(imge(expresiones[j].getDOTAFN()));
                 imagesAFD.Add(imge(expresiones[j].getDOTAFD()));
                 imagesTran.Add(imge(expresiones[j].getDOTTabla()));
             }
+            try 
+            {
+                pictureBox1.Image = imagesAFD[0];
+                pictureBox2.Image = imagesAFN[0];
+                pictureBox3.Image = imagesTran[0];
+            }
+            catch (Exception)
+            {}
 
-            pictureBox1.Image = imagesAFD[0];
-            pictureBox2.Image = imagesAFN[0];
-            pictureBox3.Image = imagesTran[0];
             Analizador_Lexico.Singleton.imprimirListaToken(this.nombreArchivoER);
             Analizador_Lexico.Singleton.imprimirListaErrores(this.nombreArchivoER);
             Console.WriteLine("FIN!!!");
@@ -249,13 +274,14 @@ namespace _OLC1_Proyecto1_201807190
             {
                 MessageBox.Show("Algo ha salido mal", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            Console.WriteLine("alv");
             return null;
         }
 
         int contImages = 0;
         private void button2_Click(object sender, EventArgs e)
         {
+            try 
+            {
             if (contImages == 0)
                 return;
             else
@@ -263,10 +289,15 @@ namespace _OLC1_Proyecto1_201807190
             pictureBox1.Image = imagesAFD[contImages];
             pictureBox2.Image = imagesAFN[contImages];
             pictureBox3.Image = imagesTran[contImages];
+            }
+            catch (Exception)
+            { }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            try 
+            {
             if(imagesAFD.Count > 0)
                 if (contImages == imagesAFD.Count - 1)
                     return;
@@ -275,6 +306,9 @@ namespace _OLC1_Proyecto1_201807190
             pictureBox1.Image = imagesAFD[contImages];
             pictureBox2.Image = imagesAFN[contImages];
             pictureBox3.Image = imagesTran[contImages];
+            }
+            catch (Exception)
+            { }
         }
     }
 }
