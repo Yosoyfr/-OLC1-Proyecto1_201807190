@@ -43,7 +43,7 @@ namespace _OLC1_Proyecto1_201807190
         }
         public String DOT_String()
         {
-            return (this.Inicial + " -> " + this.Final + " [label=\"" + this.Simbolo + "\"];");
+            return (this.Inicial + " -> " + this.Final + " [label=\"" + this.Simbolo.Trim(new char[] { '\"' }) + "\"];");
         }
     }
 }

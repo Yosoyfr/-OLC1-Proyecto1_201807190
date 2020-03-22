@@ -21,7 +21,7 @@ namespace _OLC1_Proyecto1_201807190
             RichTextBox newText = new RichTextBox();
             newText.Dock = DockStyle.Fill;
             newText.Font = new Font("Microsoft Sans Serif", 10.2f);
-            newText.Text = "er3 -> . . . *| \"a\" \"b\" \"a\" \"b\" \"b\";";
+            //newText.Text = "er3 -> . . . *| \"a\" \"b\" \"a\" \"b\" \"b\";";
             return newText;
         }
 

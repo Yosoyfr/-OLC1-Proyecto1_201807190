@@ -129,12 +129,14 @@ namespace _OLC1_Proyecto1_201807190
 
         public string nombreArchivoER = "";
 
-        List<Image> imagesAFN;
-        List<Image> imagesAFD;
+        List<Image> imagesAFN = new List<Image>();
+        List<Image> imagesAFD = new List<Image>();
+        List<Image> imagesTran = new List<Image>();
         public void correrAnalisis()
         {
             imagesAFN = new List<Image>();
             imagesAFD = new List<Image>();
+            imagesTran = new List<Image>();
             String entrada = textualTabControl1.SelectedTab.Controls[0].Text;
             /*
              * Proceso de análisis léxico
@@ -159,7 +161,7 @@ namespace _OLC1_Proyecto1_201807190
                         if (tokensAnalisis[j].tipoToken == Token.Tipo.Signo_Llaves_Dech || tokensAnalisis[j].tipoToken == Token.Tipo.Signo_Llaves_Izq)
                         { }
                         else
-                            exp.Tokens.Add(tokensAnalisis[j].GetValor.Trim(new char[] { '\"' }));
+                            exp.Tokens.Add(tokensAnalisis[j].GetValor);
                         j++;
                     }
                     expresiones.Add(exp);
@@ -194,10 +196,12 @@ namespace _OLC1_Proyecto1_201807190
 
                 imagesAFN.Add(imge(expresiones[j].getDOTAFN()));
                 imagesAFD.Add(imge(expresiones[j].getDOTAFD()));
+                imagesTran.Add(imge(expresiones[j].getDOTTabla()));
             }
 
             pictureBox1.Image = imagesAFD[0];
             pictureBox2.Image = imagesAFN[0];
+            pictureBox3.Image = imagesTran[0];
             Analizador_Lexico.Singleton.imprimirListaToken(this.nombreArchivoER);
             Analizador_Lexico.Singleton.imprimirListaErrores(this.nombreArchivoER);
             Console.WriteLine("FIN!!!");
@@ -247,6 +251,30 @@ namespace _OLC1_Proyecto1_201807190
             }
             Console.WriteLine("alv");
             return null;
+        }
+
+        int contImages = 0;
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (contImages == 0)
+                return;
+            else
+                contImages--;
+            pictureBox1.Image = imagesAFD[contImages];
+            pictureBox2.Image = imagesAFN[contImages];
+            pictureBox3.Image = imagesTran[contImages];
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if(imagesAFD.Count > 0)
+                if (contImages == imagesAFD.Count - 1)
+                    return;
+                else
+                    contImages++;
+            pictureBox1.Image = imagesAFD[contImages];
+            pictureBox2.Image = imagesAFN[contImages];
+            pictureBox3.Image = imagesTran[contImages];
         }
     }
 }

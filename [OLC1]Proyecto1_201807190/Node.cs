@@ -242,7 +242,7 @@ namespace _OLC1_Proyecto1_201807190
             return afn_concat;
         }
 
-        public Automata disyuncion(Automata AFN1, Automata AFN2)
+        public Automata disyuncion(Automata AFN2, Automata AFN1)
         {
             Automata afn_disyun = new Automata();
 
