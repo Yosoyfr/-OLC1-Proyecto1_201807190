@@ -58,7 +58,7 @@ namespace _OLC1_Proyecto1_201807190
             }
         }
 
-        public string showConjuntos()
+        public string showConjunto()
         {
             string auxS = this.nombre + " -> ";
             foreach (char aux in arrayValue)
@@ -66,7 +66,6 @@ namespace _OLC1_Proyecto1_201807190
                 auxS += aux;
             }
             Console.WriteLine(auxS);
-            Console.WriteLine("-------------------------------------------------------------------------------------------");
             return auxS;
         }
 

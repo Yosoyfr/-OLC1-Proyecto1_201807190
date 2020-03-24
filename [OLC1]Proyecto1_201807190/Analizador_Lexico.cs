@@ -639,19 +639,55 @@ namespace _OLC1_Proyecto1_201807190
             }
         }
 
+        /*
+         * Lista de lexemas que vienen en el analisis
+         */
+        public List<Lexema> Lista_Lexemas = new List<Lexema>();
+
+        /*
+         * Distribucion de los lexemas
+         */
+        public List<Lexema> distribucionLexemas()
+        {
+            for (int i = 0; i < this.Lista_de_Tokens.Count; i++)
+            {
+                if (this.Lista_de_Tokens[i].tipoToken == Token.Tipo.Variable && this.Lista_de_Tokens[i + 1].tipoToken == Token.Tipo.Signo_Dos_Puntos && this.Lista_de_Tokens[i + 2].tipoToken == Token.Tipo.Cadena)
+                {
+                    Lexema lex = new Lexema(this.Lista_de_Tokens[i + 2].GetValor, this.Lista_de_Tokens[i].GetValor);
+                    lex.Conjuntos = distribucionConjuntos();
+                    lex.print();
+                    this.Lista_Lexemas.Add(lex);
+                }
+            }
+            return this.Lista_Lexemas;
+        }
+
+        /*
+         * Lista de conjuntos que vienen en el analisis
+         */
+        public List<Conjunto> Lista_Conjuntos = new List<Conjunto>();
 
         /*
          * Distribucion de los conjuntos
          */
-        public void distribucionConjuntos()
+        public List<Conjunto> distribucionConjuntos()
         {
-            for (int i = 0; i < Lista_de_Tokens.Count; i++)
+            for (int i = 0; i < this.Lista_de_Tokens.Count; i++)
             {
-                if (Lista_de_Tokens[i].tipoToken == Token.Tipo.Valor_CONJ)
+                if (this.Lista_de_Tokens[i].tipoToken == Token.Tipo.Valor_CONJ)
                 {
-                    Conjunto conj = new Conjunto(Lista_de_Tokens[i - 2].GetValor, Lista_de_Tokens[i].GetValor);
-                    conj.showConjuntos();
+                    Conjunto conj = new Conjunto(this.Lista_de_Tokens[i - 2].GetValor, this.Lista_de_Tokens[i].GetValor);
+                    this.Lista_Conjuntos.Add(conj);
                 }
+            }
+            return this.Lista_Conjuntos;
+        }
+
+        public void getConjuntos()
+        {
+            foreach (Conjunto aux in this.Lista_Conjuntos)
+            {
+                aux.showConjunto();
             }
         }
 

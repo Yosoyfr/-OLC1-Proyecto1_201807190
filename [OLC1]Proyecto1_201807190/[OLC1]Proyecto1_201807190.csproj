@@ -52,6 +52,7 @@
     <Compile Include="Estado.cs" />
     <Compile Include="Evaluador_Expresion.cs" />
     <Compile Include="Expresion.cs" />
+    <Compile Include="Lexema.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Operador.cs" />
     <Compile Include="Form1.cs">
@@ -100,6 +101,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\flechaD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\error.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\error 1.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

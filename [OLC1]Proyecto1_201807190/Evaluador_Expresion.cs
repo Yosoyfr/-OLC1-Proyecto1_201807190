@@ -22,22 +22,6 @@ namespace _OLC1_Proyecto1_201807190
 
         public Evaluador_Expresion(List<string> expression)
         {
-            int i = 0;
-            int cont = 0;
-            while (i < expression.Count)
-            {
-                if (expression[i].Equals("+"))
-                    cont++;
-                i++;
-            }
-            Stack p1 = new Stack();
-            Stack p2 = new Stack();
-
-            while (cont > 0)
-            {
-                convertList(expression, p1, p2);
-                cont--;
-            }
             preASTTree = createPreExp(expression);
         }
 
@@ -101,37 +85,6 @@ namespace _OLC1_Proyecto1_201807190
             return (Node)stackNodes.Pop();
         }
 
-        //Metodo para convertir la cerradura positiva (+) en (.) expresion (*) expresion
-        public void convertList(List<string> expression, Stack p1, Stack p2) 
-        {
-            //Se lee la expresion de izquierda a derecha
-            int i = expression.Count - 1;
-            while (i > -1)
-            {
-                string token = expression[i];
-
-                if (token.Equals("+"))
-                {
-                    expression.RemoveAt(i);
-
-                    expression.Add(".");
-                    while(p1.Count > 0)
-                        expression.Add((string)p1.Pop());
-
-                    expression.Add("*");
-                    while (p2.Count > 0)
-                        expression.Add((string)p2.Pop());
-                    break;
-                }
-                else 
-                {
-                    p1.Push(token);
-                    p2.Push(token);
-                    expression.RemoveAt(i);
-                }
-                i--;
-            }
-        }
 
         public string evaluateExpression(List<string> expression)
         {
@@ -141,20 +94,14 @@ namespace _OLC1_Proyecto1_201807190
             preASTTree = createPreExp(expression);
             try
             {
-                preASTTree.processNode(stackResults);
+                preASTTree.processNodePre(stackResults);
                 result = (string)stackResults.Pop();
             }
             catch (Exception) 
             { 
 
             }
-            string resultado = "";
-            int i = result.Length - 1;
-            while (i > -1)
-            {
-                resultado += result[i--];
-            }
-            return resultado;
+            return result;
         }
 
         public Automata evaluateAFN(List<string> expression)

@@ -39,18 +39,26 @@ namespace _OLC1_Proyecto1_201807190
 
         public void convertAFN()
         {
+            this.afd.Inicial = this.afn.Inicial;
             Queue cola = new Queue();
             List<Estado> pruebaCerr = new List<Estado>();
             pruebaCerr.Add(this.afn.Inicial);
-            List<Estado> cerraduras = cerradura(pruebaCerr);
+            List<Estado> cerraduraI = cerradura(pruebaCerr);
             List<List<Estado>> List_Est = new List<List<Estado>>();
-            List_Est.Add(cerraduras);
-            cola.Enqueue(cerraduras);
-
+            List_Est.Add(cerraduraI);
+            cola.Enqueue(cerraduraI);
+            foreach (Estado est in this.afn.Estados_Aceptacion)
+            {
+                if (cerraduraI.Contains(est))
+                {
+                    this.afd.Estados_Aceptacion.Add(this.afd.Inicial);
+                }
+            }
             while (cola.Count > 0)
             {
                 Estado newInicial = new Estado(varLetra - 65);
                 Tabla_Transiciones tabla = new Tabla_Transiciones(newInicial);
+                tabla.Cerraduras = List_Est[newInicial.Id];
                 List<Estado> aux1 = (List<Estado>)cola.Dequeue();
                 foreach (string alf in this.afd.Alfabeto)
                 {
@@ -84,6 +92,16 @@ namespace _OLC1_Proyecto1_201807190
                         Transicion tran = new Transicion(newInicial, newFinal, alf);
                         newInicial.Transiciones.Add(tran);
                         tabla.Alcanzados.Add(newFinal);
+                        foreach (Estado est in this.afn.Estados_Aceptacion)
+                        {
+                            if (newEsts.Contains(est))
+                            {
+                                if (!this.afd.containAceptacion(newFinal))
+                                {
+                                    this.afd.Estados_Aceptacion.Add(newFinal);
+                                }
+                            }
+                        }
                     }
                     else 
                     {
@@ -196,7 +214,12 @@ namespace _OLC1_Proyecto1_201807190
 
         public string getDOTAFN()
         {
-            string graph = " digraph G {\n rankdir=LR;\n node[shape = circle];\n ";
+            string graph = " digraph G {\n " +
+                "rankdir=LR;\n " +
+                "node [shape=doublecircle]; " + afn.getDOTAceptacion() + ";\n" +
+                "node[shape = circle];\n 	" +
+                "s [style=invis];\n " +
+                "s-> 0[label = \"Inicio\"];\n ";
 
             graph += afn.getDOT();
 
@@ -207,7 +230,12 @@ namespace _OLC1_Proyecto1_201807190
 
         public string getDOTAFD()
         {
-            string graph = " digraph G {\n rankdir=LR;\n node[shape = circle];\n ";
+            string graph = " digraph G {\n " +
+                "rankdir=LR;\n " +
+                "node [shape=doublecircle]; " + afd.getDOTAceptacion() + ";\n" +
+                "node[shape = circle];\n 	" +
+                "s [style=invis];\n " +
+                "s-> 0[label = \"Inicio\"];\n ";
 
             graph += afd.getDOT();
 
@@ -225,12 +253,14 @@ namespace _OLC1_Proyecto1_201807190
                 "tbl [label=<\n";
 
             graph += "\t<table>\n";
-            graph += "\t\t<tr>\n\t\t\t<td>Estados</td>\n";
+            graph += "\t\t<tr>\n\t\t\t<td>Estados del AFN</td>\n";
+            graph += "\t\t<td>Estado del AFD</td>\n";
             foreach (string varS in this.afd.Alfabeto)
             {
                 graph += "\t\t\t<td>" + varS + "</td>\n";
             }
             graph += "\t\t</tr>\n";
+
             foreach (Tabla_Transiciones auxTran in tablaTran)
             {
                 graph += "\t\t" + auxTran.getDOT() + "\n";
@@ -239,6 +269,12 @@ namespace _OLC1_Proyecto1_201807190
             graph += "\t</table>\n>];\n}";
 
             return graph;
+        }
+
+        public void evaluacionExpresiones(string lexema) 
+        {
+            Console.WriteLine(this.nombre);
+            Console.WriteLine(lexema);
         }
     }
 }

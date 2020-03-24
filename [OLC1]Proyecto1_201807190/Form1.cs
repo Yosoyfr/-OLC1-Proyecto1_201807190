@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _OLC1_Proyecto1_201807190.Properties;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -143,6 +144,10 @@ namespace _OLC1_Proyecto1_201807190
              */
             List<Token> tokensAnalisis = Analizador_Lexico.Singleton.analizador(entrada);
             Analizador_Lexico.Singleton.distribucionConjuntos();
+            Console.WriteLine("Conjuntos: ");
+            Analizador_Lexico.Singleton.getConjuntos();
+            Console.WriteLine("Lexemas: ");
+            List<Lexema> lexemasAnalisis =  Analizador_Lexico.Singleton.distribucionLexemas();
             tokensAnalisis.Add(new Token(Token.Tipo.Ultimo, "ultimo", 0, 0));
 
             //Lista de expresiones
@@ -164,9 +169,13 @@ namespace _OLC1_Proyecto1_201807190
                             { }
                             else
                             {
-                                if (tokensAnalisis[j].tipoToken == Token.Tipo.Tabulacion || tokensAnalisis[j].tipoToken == Token.Tipo.Salto_de_Linea || tokensAnalisis[j].GetValor.Equals("\\"))
+                                if (tokensAnalisis[j].tipoToken == Token.Tipo.Tabulacion || tokensAnalisis[j].tipoToken == Token.Tipo.Salto_de_Linea)
                                 {
                                     exp.Tokens.Add("\\" + tokensAnalisis[j].GetValor);
+                                }
+                                else if (tokensAnalisis[j].tipoToken == Token.Tipo.Comilla_Doble) 
+                                {
+                                    exp.Tokens.Add("\\\"");
                                 }
                                 else
                                 {
@@ -179,6 +188,14 @@ namespace _OLC1_Proyecto1_201807190
                                 }
                             }
                             j++;
+                        }
+                        Evaluador_Expresion myExpression = new Evaluador_Expresion(exp.Tokens);
+                        Analizador_Lexico analisis = new Analizador_Lexico();
+                        List<Token> auxTokens = analisis.analizador(myExpression.evaluateExpression(exp.Tokens));
+                        exp.Tokens.Clear();
+                        foreach (Token t in auxTokens)
+                        {
+                            exp.Tokens.Add(t.GetValor);
                         }
                         expresiones.Add(exp);
                     }
@@ -202,18 +219,17 @@ namespace _OLC1_Proyecto1_201807190
                 {
                     if (!alfabeto.Contains(token) && !token.Equals("Ɛ") && !token.Equals("+") && !token.Equals("|") && !token.Equals("*") && !token.Equals("?") && !token.Equals("."))
                     {
-                        alfabeto.Add(token.Trim(new char[] { '\"' }));
+                        alfabeto.Add(token);
                     }
-                }
-                foreach (string aux in alfabeto)
-                {
-                    Console.WriteLine(aux);
                 }
 
                 expresiones[j].Afn = AFN;
                 expresiones[j].Afd.Alfabeto = alfabeto;
                 expresiones[j].convertAFN();
-
+                /*
+                Console.WriteLine(expresiones[j].Afn);
+                Console.WriteLine(expresiones[j].Afd);
+                */
                 imagesAFN.Add(imge(expresiones[j].getDOTAFN()));
                 imagesAFD.Add(imge(expresiones[j].getDOTAFD()));
                 imagesTran.Add(imge(expresiones[j].getDOTTabla()));
@@ -225,14 +241,16 @@ namespace _OLC1_Proyecto1_201807190
                 pictureBox3.Image = imagesTran[0];
             }
             catch (Exception)
-            {}
+            {
+                pictureBox1.Image = Resources.error;
+                pictureBox2.Image = Resources.error;
+                pictureBox3.Image = Resources.error_1;
+            }
 
             Analizador_Lexico.Singleton.imprimirListaToken(this.nombreArchivoER);
             Analizador_Lexico.Singleton.imprimirListaErrores(this.nombreArchivoER);
             Console.WriteLine("FIN!!!");
         }
-
-
 
         public static string graphviz = @"D:\Graphviz2.38\bin\dot.exe";
         public static string archivoentrada = @"D:\Francisco" + '\\' + "afn.dot";
@@ -274,7 +292,7 @@ namespace _OLC1_Proyecto1_201807190
             {
                 MessageBox.Show("Algo ha salido mal", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            return null;
+            return Resources.error;
         }
 
         int contImages = 0;

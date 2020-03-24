@@ -65,13 +65,57 @@ namespace _OLC1_Proyecto1_201807190
                     result += (string)stackResults.Pop() + "|" + (string)stackResults.Pop();
                     break;
                 case Operador.Cerradura_Positiva:
-                    result += ")" + (string)stackResults.Pop() + "(+";
+                    result += "+" + (string)stackResults.Pop() + "";
                     break;
                 case Operador.Kleene:
-                    result += ")" + (string)stackResults.Pop() + "(*";
+                    result += "*" + (string)stackResults.Pop() + "";
                     break;
                 case Operador.Interrogacion:
-                    result += ")" + (string)stackResults.Pop() + "(?";
+                    result += "?" + (string)stackResults.Pop() + "";
+                    break;
+                default:
+                    result += data;
+                    break;
+            }
+            stackResults.Push(result);
+        }
+
+        public void processNodePre(Stack stackResults)
+        {
+            if (left != null)
+            {
+                left.processNodePre(stackResults);
+            }
+
+            if (right != null)
+            {
+                right.processNodePre(stackResults);
+
+            }
+
+            string result = "";
+
+            switch (data)
+            {
+                case Operador.Concatenar:
+                    string p1 = (string)stackResults.Pop();
+                    string p2 = (string)stackResults.Pop();
+                    result += "." + p2 + " " + p1 + " ";
+                    break;
+                case Operador.Disyuncion:
+                    string p3 = (string)stackResults.Pop();
+                    string p4 = (string)stackResults.Pop();
+                    result += "|" + p4 + " " + p3 + " ";
+                    break;
+                case Operador.Cerradura_Positiva:
+                    string p5 = (string)stackResults.Pop();
+                    result += "." +  p5 + "*" + p5 + " ";
+                    break;
+                case Operador.Kleene:
+                    result += "*" + (string)stackResults.Pop() + " ";
+                    break;
+                case Operador.Interrogacion:
+                    result += "?" + (string)stackResults.Pop() + " ";
                     break;
                 default:
                     result += data;
@@ -81,7 +125,7 @@ namespace _OLC1_Proyecto1_201807190
         }
 
         //Proceso de thompson
-        
+
         public void buildAFN(Stack stackAFN)
         {
             if (left != null)

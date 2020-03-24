@@ -57,6 +57,20 @@ namespace _OLC1_Proyecto1_201807190
             return graph;
         }
 
+        public string getDOTAceptacion()
+        {
+            string graph = "";
+            for (int i = 0; i < this.estados_Aceptacion.Count; i++)
+            {
+                Estado est = estados_Aceptacion[i];
+                if (i + 1 < this.estados_Aceptacion.Count)
+                    graph += est + ", ";
+                else
+                    graph += est;
+            }
+            return graph;
+        }
+
         public string[,] matriz(int v)
         {
             string[,] est = new string[v, v];
@@ -71,6 +85,16 @@ namespace _OLC1_Proyecto1_201807190
             }
             est[v - 1, v - 1] = "#";
             return est;
+        }
+
+        public bool containAceptacion(Estado est) 
+        {
+            foreach (Estado aux in estados_Aceptacion)
+            {
+                if(aux.Id == est.Id)
+                    return true;
+            }
+            return false;
         }
         
         override
@@ -97,6 +121,9 @@ namespace _OLC1_Proyecto1_201807190
                     res += est.Transiciones[j].DOT_String();
                 }
             }
+            res += "\r\n";
+            res += "Estados de aceptacion ";
+            res += getDOTAceptacion();
             res += "\r\n";
             return res;
         }
