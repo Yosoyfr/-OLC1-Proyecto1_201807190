@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PdfSharp.Pdf;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -696,7 +697,7 @@ namespace _OLC1_Proyecto1_201807190
          * pestaña en focus
          */
 
-        public void imprimirListaToken(string nombreArchivoER)
+        public void imprimirListaToken(string nombreArchivoER, List<Token> lista)
         {
             try
             {
@@ -754,16 +755,16 @@ namespace _OLC1_Proyecto1_201807190
                 /*
                  * Enlistado del vector de tokens encontrado en el analisis
                  */
-                for (int i = 0; i < Lista_de_Tokens.Count; i++)
+                for (int i = 0; i < lista.Count; i++)
                 {
-                    if (Lista_de_Tokens[i] != null && Lista_de_Tokens[i].tipoToken != Token.Tipo.Ultimo)
+                    if (lista[i] != null && lista[i].tipoToken != Token.Tipo.Ultimo)
                     {
                         Lista_de_Tokens_HTML = Lista_de_Tokens_HTML +
                             "<tr>\n"
                          + "				      <th scope=\"row\">" + (i + 1) + "</th>\n"
-                         + "				      <td>" + Lista_de_Tokens[i].GetLinea + "</td>\n"
-                         + "				      <td style=\"width: 450px\" >" + Lista_de_Tokens[i].GetValor + "</td>\n"
-                         + "				      <td style=\"width: 400px\">" + Lista_de_Tokens[i].GetTipo + "</td>\n"
+                         + "				      <td>" + lista[i].GetLinea + "</td>\n"
+                         + "				      <td style=\"width: 450px\" >" + lista[i].GetValor + "</td>\n"
+                         + "				      <td style=\"width: 400px\">" + lista[i].GetTipo + "</td>\n"
                          + "				    </tr>";
                     }
                 }
@@ -888,12 +889,55 @@ namespace _OLC1_Proyecto1_201807190
                  */
 
                 File.WriteAllText(Application.StartupPath + "\\Archivos HTMLS\\Reporte de Errores.html", Lista_de_Errores_HTML);
-
-
+                PdfDocument pdfDocument = new PdfDocument();
+                pdfDocument = TheArtOfDev.HtmlRenderer.PdfSharp.PdfGenerator.GeneratePdf(Lista_de_Errores_HTML, PdfSharp.PageSize.A4);
+                pdfDocument.Save(Application.StartupPath + "\\Archivos HTMLS\\R Errores.pdf");
             }
             catch { }
         }
 
+        public void imprimirXML(List<Token> lista, string nombre)
+        {
+            using (StreamWriter outputFile = new StreamWriter("D:\\Francisco\\" + nombre +".xml"))
+            {
+                outputFile.WriteLine("<ListaTokens>" + "\r\n");
+
+                foreach (Token t in lista)
+                {
+
+                    outputFile.WriteLine("  <Token>" + "\r\n" +
+                  "     <Nombre>" + t.GetTipo + "</Nombre>" + "\r\n" +
+                  "     <Valor>" + t.GetValor + "</Valor>" + "\r\n" +
+                  "     <Fila>" + t.GetLinea + "</Fila>" + "\r\n" +
+                  "     <Columna>" + t.GetColumna + "</Columna>" + "\r\n" +
+                   "  </Token>" + "\r\n"
+                     );
+
+                }
+                outputFile.WriteLine("</ListaTokens>");
+            }
+        }
+
+        public void imprimirXMLErrores(string nombre)
+        {
+            using (StreamWriter outputFile = new StreamWriter("D:\\Francisco\\" + nombre + ".xml"))
+            {
+                outputFile.WriteLine("<ListaErrores>" + "\r\n");
+
+                foreach (Token t in Lista_de_Errores)
+                {
+
+                    outputFile.WriteLine("  <Error>" + "\r\n" +
+                  "     <Valor>" + t.GetValor + "</Valor>" + "\r\n" +
+                  "     <Fila>" + t.GetLinea + "</Fila>" + "\r\n" +
+                  "     <Columna>" + t.GetColumna + "</Columna>" + "\r\n" +
+                   "  </Error>" + "\r\n"
+                     );
+
+                }
+                outputFile.WriteLine("</ListaErrores>");
+            }
+        }
 
         public void abrirHTMLTokens()
         {

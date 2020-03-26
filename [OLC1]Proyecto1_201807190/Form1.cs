@@ -142,12 +142,17 @@ namespace _OLC1_Proyecto1_201807190
             /*
              * Proceso de análisis léxico
              */
-            List<Token> tokensAnalisis = Analizador_Lexico.Singleton.analizador(entrada);
-            Analizador_Lexico.Singleton.distribucionConjuntos();
+            Analizador_Lexico analisis = new Analizador_Lexico();
+            List<Token> tokensAnalisis = analisis.analizador(entrada);
+            analisis.imprimirXMLErrores("Errores");
+            analisis.imprimirListaToken(this.nombreArchivoER, tokensAnalisis);
+            analisis.imprimirListaErrores(this.nombreArchivoER);
+            analisis.imprimirXML(tokensAnalisis, "Tokens");
+            analisis.distribucionConjuntos();
             Console.WriteLine("Conjuntos: ");
-            Analizador_Lexico.Singleton.getConjuntos();
+            analisis.getConjuntos();
             Console.WriteLine("Lexemas: ");
-            List<Lexema> lexemasAnalisis =  Analizador_Lexico.Singleton.distribucionLexemas();
+            List<Lexema> lexemasAnalisis =  analisis.distribucionLexemas();
             tokensAnalisis.Add(new Token(Token.Tipo.Ultimo, "ultimo", 0, 0));
 
             //Lista de expresiones
@@ -169,34 +174,19 @@ namespace _OLC1_Proyecto1_201807190
                             { }
                             else
                             {
-                                if (tokensAnalisis[j].tipoToken == Token.Tipo.Tabulacion || tokensAnalisis[j].tipoToken == Token.Tipo.Salto_de_Linea)
-                                {
-                                    exp.Tokens.Add("\\" + tokensAnalisis[j].GetValor);
-                                }
-                                else if (tokensAnalisis[j].tipoToken == Token.Tipo.Comilla_Doble) 
-                                {
-                                    exp.Tokens.Add("\\\"");
-                                }
-                                else
-                                {
-                                    string aux = tokensAnalisis[j].GetValor;
-                                    if (aux.Trim(new char[] { '\"' }) == "\\")
-                                    {
-                                        aux = "\\" + aux.Trim(new char[] { '\"' });
-                                    }
-                                    exp.Tokens.Add(aux);
-                                }
+                                exp.Tokens.Add(tokensAnalisis[j].GetValor);
                             }
                             j++;
                         }
+                        
                         Evaluador_Expresion myExpression = new Evaluador_Expresion(exp.Tokens);
-                        Analizador_Lexico analisis = new Analizador_Lexico();
                         List<Token> auxTokens = analisis.analizador(myExpression.evaluateExpression(exp.Tokens));
                         exp.Tokens.Clear();
                         foreach (Token t in auxTokens)
                         {
                             exp.Tokens.Add(t.GetValor);
                         }
+                        exp.Token = auxTokens;
                         expresiones.Add(exp);
                     }
                     catch (Exception)
@@ -206,12 +196,13 @@ namespace _OLC1_Proyecto1_201807190
                 }
                 i++;
             }
-
+            string consola = "   Analisis de lexemas por parte de las expresiones regulares\n";
             for (int j = 0; j < expresiones.Count; j++)
             {
                 Evaluador_Expresion myExpression = new Evaluador_Expresion(expresiones[j].Tokens);
 
-                Automata AFN = myExpression.evaluateAFN(expresiones[j].Tokens);
+                Automata AFN = new Automata();
+                AFN = myExpression.evaluateAFN(expresiones[j].Tokens);
 
                 List<string> alfabeto = new List<string>();
 
@@ -233,9 +224,16 @@ namespace _OLC1_Proyecto1_201807190
                 imagesAFN.Add(imge(expresiones[j].getDOTAFN()));
                 imagesAFD.Add(imge(expresiones[j].getDOTAFD()));
                 imagesTran.Add(imge(expresiones[j].getDOTTabla()));
+
+
+                foreach (Lexema lex in lexemasAnalisis)
+                {
+                    consola += expresiones[j].evaluacionLexemas(lex);
+                }
             }
             try 
             {
+                richTextBox1.Text = consola;
                 pictureBox1.Image = imagesAFD[0];
                 pictureBox2.Image = imagesAFN[0];
                 pictureBox3.Image = imagesTran[0];
@@ -246,9 +244,6 @@ namespace _OLC1_Proyecto1_201807190
                 pictureBox2.Image = Resources.error;
                 pictureBox3.Image = Resources.error_1;
             }
-
-            Analizador_Lexico.Singleton.imprimirListaToken(this.nombreArchivoER);
-            Analizador_Lexico.Singleton.imprimirListaErrores(this.nombreArchivoER);
             Console.WriteLine("FIN!!!");
         }
 

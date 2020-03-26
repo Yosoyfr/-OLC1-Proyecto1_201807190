@@ -16,6 +16,7 @@ namespace _OLC1_Proyecto1_201807190
         //Atributos del objeto
         string nombre;
         List<string> tokens;
+        List<Token> token;
         Automata afn;
         Automata afd;
 
@@ -29,17 +30,17 @@ namespace _OLC1_Proyecto1_201807190
             afd = new Automata();
             this.Nombre = nombre;
             tablaTran = new List<Tabla_Transiciones>();
+            this.Token = new List<Token>();
         }
 
         public List<string> Tokens { get => tokens; set => tokens = value; }
         public string Nombre { get => nombre; set => nombre = value; }
         public Automata Afn { get => afn; set => afn = value; }
         public Automata Afd { get => afd; set => afd = value; }
-
+        public List<Token> Token { get => token; set => token = value; }
 
         public void convertAFN()
         {
-            this.afd.Inicial = this.afn.Inicial;
             Queue cola = new Queue();
             List<Estado> pruebaCerr = new List<Estado>();
             pruebaCerr.Add(this.afn.Inicial);
@@ -51,7 +52,7 @@ namespace _OLC1_Proyecto1_201807190
             {
                 if (cerraduraI.Contains(est))
                 {
-                    this.afd.Estados_Aceptacion.Add(this.afd.Inicial);
+                    this.afd.Estados_Aceptacion.Add(this.afn.Inicial);
                 }
             }
             while (cola.Count > 0)
@@ -113,7 +114,7 @@ namespace _OLC1_Proyecto1_201807190
                 this.afd.Estados.Add(newInicial);
                 varLetra++;
             }
-
+            this.afd.Inicial = this.afd.Estados[0];
             this.afd.Tipo = "AFD";
             /*
             foreach (List<Estado> auxList in List_Est)
@@ -144,13 +145,13 @@ namespace _OLC1_Proyecto1_201807190
             Stack stackEst = new Stack();
             foreach (Estado est in estados)
             {
-                Estado actual = est;
-                stackEst.Push(actual);
+                Estado aux = est;
+                stackEst.Push(aux);
 
                 while (stackEst.Count > 0)
                 {
-                    actual = (Estado)stackEst.Pop();
-                    foreach (Transicion t in actual.Transiciones)
+                    aux = (Estado)stackEst.Pop();
+                    foreach (Transicion t in aux.Transiciones)
                     {
                         if (t.Simbolo.Equals("Ɛ") && !result.Contains(t.Final))
                         {
@@ -271,10 +272,103 @@ namespace _OLC1_Proyecto1_201807190
             return graph;
         }
 
-        public void evaluacionExpresiones(string lexema) 
+        int estado = 0;
+        int cont = 0;
+        public string evaluacionLexemas(Lexema lexema)
         {
-            Console.WriteLine(this.nombre);
-            Console.WriteLine(lexema);
+            bool bandera = true;
+            string lex = lexema.Valor.Trim(new char[] { '\"' });
+            if (lexema.Evaluador.Equals(this.nombre))
+            {
+                for (cont = 0; cont < lex.Length; cont++)
+                {
+                    string c = lex[cont] + "";
+                    Estado est = this.afd.Estados[estado];
+                    bandera = evalCadenas(est, lex, c, lexema.Conjuntos);
+                    if (!bandera) 
+                    {
+                        break;
+                    }
+
+                }
+                bool perm = false;
+                foreach (Estado est in this.afd.Estados_Aceptacion)
+                {
+                    if (estado == est.Id)
+                    {
+                        perm = true;
+                        break;
+                    }
+                }
+                estado = 0;
+                cont = 0;
+                if (perm && bandera)
+                {
+                    return "      " + lexema.Valor + " lexema valido para la expresion: " + this.nombre + "\n";
+                }
+                else
+                {
+                    return "      " + lexema.Valor + " lexema no valido para la expresion: " + this.nombre + "\n";
+                }
+            }
+            return "";
+        }
+
+        private bool evalCadenas(Estado est, string lex, string c, List<Conjunto> listConj)
+        {
+            foreach (Transicion t in est.Transiciones)
+            {
+                Console.WriteLine(t.Final);
+                bool esConjunto = false;
+                Conjunto conjuntoAux = null;
+                foreach (Conjunto conj in listConj)
+                {
+                    if (t.Simbolo.Equals(conj.Nombre))
+                    {
+                        esConjunto = true;
+                        conjuntoAux = conj;
+                        break;
+                    }
+                }
+                if (esConjunto)
+                {
+                    foreach (char cAux in conjuntoAux.ArrayValue)
+                    {
+                        if (cAux == c[0])
+                        {
+                            //Console.WriteLine(cAux + "=" + c[0]);
+                            estado = t.Final.Id;
+                            return true;
+                        }
+                    }
+                }
+                else 
+                {
+                    int j = cont;
+                    if (t.Simbolo.Trim(new char[] { '\"' }).Length != 1)
+                    {
+                        string prueba = "";
+                        for (j = cont; j < cont + t.Simbolo.Trim(new char[] { '\"' }).Length; j++)
+                        {
+                            if (j < lex.Length)
+                                prueba += lex[j];
+                        }
+                        c = prueba;
+                        j--;
+                    }
+                    Console.WriteLine(c);
+                    Console.WriteLine("aun estoy else alv");
+                    if (estado == t.Inicial.Id && c == t.Simbolo.Trim(new char[] { '\"' }))
+                    {
+                        Console.WriteLine("No debi entrar");
+                        cont = j;
+                        estado = t.Final.Id;
+                        return true;
+                    }
+                }
+                Console.WriteLine("Sali del else alv");
+            }
+            return false;
         }
     }
 }

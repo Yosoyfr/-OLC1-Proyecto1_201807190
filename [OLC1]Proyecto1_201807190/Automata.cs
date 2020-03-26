@@ -91,7 +91,7 @@ namespace _OLC1_Proyecto1_201807190
         {
             foreach (Estado aux in estados_Aceptacion)
             {
-                if(aux.Id == est.Id)
+                if(aux.Id == est.Id && aux != null)
                     return true;
             }
             return false;
