@@ -84,6 +84,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Token.cs" />
+    <Compile Include="TokenLexema.cs" />
     <Compile Include="Transicion.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

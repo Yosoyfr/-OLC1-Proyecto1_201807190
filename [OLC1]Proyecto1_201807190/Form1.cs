@@ -133,11 +133,16 @@ namespace _OLC1_Proyecto1_201807190
         List<Image> imagesAFN = new List<Image>();
         List<Image> imagesAFD = new List<Image>();
         List<Image> imagesTran = new List<Image>();
+
+        List<TokenLexema> Lexemas_Tokens = new List<TokenLexema>();
+        List<TokenLexema> Lexemas_Errores = new List<TokenLexema>();
         public void correrAnalisis()
         {
             imagesAFN = new List<Image>();
             imagesAFD = new List<Image>();
             imagesTran = new List<Image>();
+            Lexemas_Tokens = new List<TokenLexema>();
+            Lexemas_Errores = new List<TokenLexema>();
             String entrada = textualTabControl1.SelectedTab.Controls[0].Text;
             /*
              * Proceso de análisis léxico
@@ -230,6 +235,14 @@ namespace _OLC1_Proyecto1_201807190
                 {
                     consola += expresiones[j].evaluacionLexemas(lex);
                 }
+                foreach (TokenLexema t in expresiones[j].exportListLexeme())
+                {
+                    Lexemas_Tokens.Add(t);
+                }
+                foreach (TokenLexema t in expresiones[j].exportListError())
+                {
+                    Lexemas_Errores.Add(t);
+                }
             }
             try 
             {
@@ -237,6 +250,8 @@ namespace _OLC1_Proyecto1_201807190
                 pictureBox1.Image = imagesAFD[0];
                 pictureBox2.Image = imagesAFN[0];
                 pictureBox3.Image = imagesTran[0];
+                analisis.imprimirXMLLexemas("Tokens_Lexemas", Lexemas_Tokens);
+                analisis.imprimirXMLLexemasErrores("Errores_Lexemas", Lexemas_Errores);
             }
             catch (Exception)
             {

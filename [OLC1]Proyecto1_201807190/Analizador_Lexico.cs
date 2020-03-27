@@ -80,11 +80,11 @@ namespace _OLC1_Proyecto1_201807190
          * Metodo para añadir error a la lista de tokens errorenos
          */
 
-        public void addTokenErroneo(Token.Tipo token, String lexema, int linea, int columna)
-        {
-            Token nuevoToken = new Token(token, lexema, linea, columna);
-            Lista_de_Errores.Add(nuevoToken);
-        }
+            public void addTokenErroneo(Token.Tipo token, String lexema, int linea, int columna)
+            {
+                Token nuevoToken = new Token(token, lexema, linea, columna);
+                Lista_de_Errores.Add(nuevoToken);
+            }
 
         public List<Token> analizador(String entrada)
         {
@@ -784,7 +784,9 @@ namespace _OLC1_Proyecto1_201807190
                  * Proceso de guardado del archivo html
                  */
                 File.WriteAllText(Application.StartupPath + "\\Archivos HTMLS\\Reporte de Tokens.html", Lista_de_Tokens_HTML);
-
+                PdfDocument pdfDocument = new PdfDocument();
+                pdfDocument = TheArtOfDev.HtmlRenderer.PdfSharp.PdfGenerator.GeneratePdf(Lista_de_Tokens_HTML, PdfSharp.PageSize.A4);
+                pdfDocument.Save(Application.StartupPath + "\\Archivos HTMLS\\R Tokens ER.pdf");
             }
             catch { }
 
@@ -891,14 +893,14 @@ namespace _OLC1_Proyecto1_201807190
                 File.WriteAllText(Application.StartupPath + "\\Archivos HTMLS\\Reporte de Errores.html", Lista_de_Errores_HTML);
                 PdfDocument pdfDocument = new PdfDocument();
                 pdfDocument = TheArtOfDev.HtmlRenderer.PdfSharp.PdfGenerator.GeneratePdf(Lista_de_Errores_HTML, PdfSharp.PageSize.A4);
-                pdfDocument.Save(Application.StartupPath + "\\Archivos HTMLS\\R Errores.pdf");
+                pdfDocument.Save(Application.StartupPath + "\\Archivos HTMLS\\R Errores ER.pdf");
             }
             catch { }
         }
 
         public void imprimirXML(List<Token> lista, string nombre)
         {
-            using (StreamWriter outputFile = new StreamWriter("D:\\Francisco\\" + nombre +".xml"))
+            using (StreamWriter outputFile = new StreamWriter(Application.StartupPath + "\\Archivos HTMLS\\\\" + nombre +".xml"))
             {
                 outputFile.WriteLine("<ListaTokens>" + "\r\n");
 
@@ -918,9 +920,30 @@ namespace _OLC1_Proyecto1_201807190
             }
         }
 
+        public void imprimirXMLLexemas(string nombre, List<TokenLexema> lista_Token_Lexema)
+        {
+            using (StreamWriter outputFile = new StreamWriter(Application.StartupPath + "\\Archivos HTMLS\\\\" + nombre + ".xml"))
+            {
+                outputFile.WriteLine("<ListaTokens>" + "\r\n");
+
+                foreach (TokenLexema t in lista_Token_Lexema)
+                {
+
+                    outputFile.WriteLine("  <Token>" + "\r\n" +
+                  "     <Lexema>" + t.Expresion + "</Lexema>" + "\r\n" +
+                  "     <Valor>" + t.Token.GetValor + "</Valor>" + "\r\n" +
+                  "     <Columna>" + t.Token.GetColumna + "</Columna>" + "\r\n" +
+                   "  </Token>" + "\r\n"
+                     );
+
+                }
+                outputFile.WriteLine("</ListaTokens>");
+            }
+        }
+
         public void imprimirXMLErrores(string nombre)
         {
-            using (StreamWriter outputFile = new StreamWriter("D:\\Francisco\\" + nombre + ".xml"))
+            using (StreamWriter outputFile = new StreamWriter(Application.StartupPath + "\\Archivos HTMLS\\\\" + nombre + ".xml"))
             {
                 outputFile.WriteLine("<ListaErrores>" + "\r\n");
 
@@ -934,6 +957,25 @@ namespace _OLC1_Proyecto1_201807190
                    "  </Error>" + "\r\n"
                      );
 
+                }
+                outputFile.WriteLine("</ListaErrores>");
+            }
+        }
+
+        public void imprimirXMLLexemasErrores(string nombre, List<TokenLexema> lista_Token_Lexema)
+        {
+            using (StreamWriter outputFile = new StreamWriter(Application.StartupPath + "\\Archivos HTMLS\\\\" + nombre + ".xml"))
+            {
+                outputFile.WriteLine("<ListaErrores>" + "\r\n");
+
+                foreach (TokenLexema t in lista_Token_Lexema)
+                {
+                    outputFile.WriteLine("<Error>" + "\r\n" +
+                  "     <LexemaBase>" + t.Expresion + "</LexemaBase>" + "\r\n" +
+                  "     <Valor>" + t.Token.GetValor + "</Valor>" + "\r\n" +
+                  "     <Columna>" + t.Token.GetColumna + "</Columna>" + "\r\n" +
+                   "  </Error>" + "\r\n"
+                     );
                 }
                 outputFile.WriteLine("</ListaErrores>");
             }
