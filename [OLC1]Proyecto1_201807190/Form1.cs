@@ -202,6 +202,7 @@ namespace _OLC1_Proyecto1_201807190
                 i++;
             }
             string consola = "   Analisis de lexemas por parte de las expresiones regulares\n";
+            
             for (int j = 0; j < expresiones.Count; j++)
             {
                 Evaluador_Expresion myExpression = new Evaluador_Expresion(expresiones[j].Tokens);
@@ -230,7 +231,9 @@ namespace _OLC1_Proyecto1_201807190
                 imagesAFD.Add(imge(expresiones[j].getDOTAFD()));
                 imagesTran.Add(imge(expresiones[j].getDOTTabla()));
 
-
+                int a = 0;
+                int c = 8;
+                bool b = (a == c && a <= 8) || a != 0;
                 foreach (Lexema lex in lexemasAnalisis)
                 {
                     consola += expresiones[j].evaluacionLexemas(lex);
